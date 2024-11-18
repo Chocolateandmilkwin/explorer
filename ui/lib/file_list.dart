@@ -67,20 +67,22 @@ class _FileList extends State<FileList> {
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.all(4),
-        child: ListView(
-          children: widget.files
-              .map((fileInfo) =>
-                  BrowserListLine(fileinfo: fileInfo, cols: _cols))
-              .toList(),
+        child: Scrollbar(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SizedBox(
+              width: _cols
+                  .fold(50, (combine, col) => combine + col.width)
+                  .toDouble(),
+              child: ListView(
+                children: widget.files
+                    .map((fileInfo) =>
+                        BrowserListLine(fileinfo: fileInfo, cols: _cols))
+                    .toList(),
+              ),
+            ),
+          ),
         ),
-        // child: SingleChildScrollView(
-        //   child: MouseRegion(
-        //     onExit: (event) => setState(() {
-        //       _indexHover = null;
-        //     }),
-
-        //   ),
-        // ),
       ),
     );
   }
@@ -107,14 +109,13 @@ class BrowserListLine extends StatefulWidget {
 class _BrowserListLineState extends State<BrowserListLine> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 50,
+    return Container(
+      height: 30,
       child: GestureDetector(
         child: MouseRegion(
-          child: ListView(
-            scrollDirection: Axis.horizontal,
+          child: Row(
             children: widget.cols.map((col) {
-              return SizedBox(
+              return Container(
                 width: col.width.toDouble(),
                 child: Text(
                   widget.fileinfo.getInfoByID(col.id),

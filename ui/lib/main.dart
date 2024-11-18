@@ -8,12 +8,14 @@ import 'file_list.dart';
 File file = File('lib/main.dart');
 
 void main() {
-  runApp(const MyApp(title: 'Flutter Demo Home Page'));
+  runApp(const MyApp(
+      title: 'Flutter Demo Home Page', path: 'C:\\Git\\Chocolateandmilkwin'));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key, required this.title});
+  const MyApp({super.key, required this.title, required this.path});
   final String title;
+  final String path;
   @override
   State<MyApp> createState() => _MyApp();
 }
