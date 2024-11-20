@@ -64,23 +64,22 @@ class _FileList extends State<FileList> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(4),
-        child: Scrollbar(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: SizedBox(
-              width: _cols
-                  .fold(50, (combine, col) => combine + col.width)
-                  .toDouble(),
-              child: ListView(
-                children: widget.files
-                    .map((fileInfo) =>
-                        BrowserListLine(fileinfo: fileInfo, cols: _cols))
-                    .toList(),
-              ),
-            ),
+    return Scrollbar(
+      child: SingleChildScrollView(
+        primary: true,
+        scrollDirection: Axis.horizontal,
+        child: Container(
+          width: 200,
+          constraints: BoxConstraints(
+            minWidth: _cols
+                .fold(50, (combine, col) => combine + col.width)
+                .toDouble(),
+          ),
+          child: ListView(
+            children: widget.files
+                .map((fileInfo) =>
+                    BrowserListLine(fileinfo: fileInfo, cols: _cols))
+                .toList(),
           ),
         ),
       ),
@@ -109,13 +108,13 @@ class BrowserListLine extends StatefulWidget {
 class _BrowserListLineState extends State<BrowserListLine> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 30,
       child: GestureDetector(
         child: MouseRegion(
           child: Row(
             children: widget.cols.map((col) {
-              return Container(
+              return SizedBox(
                 width: col.width.toDouble(),
                 child: Text(
                   widget.fileinfo.getInfoByID(col.id),
