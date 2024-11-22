@@ -2,118 +2,119 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:reorderable_tabbar/reorderable_tabbar.dart';
 
 File file = File('lib/main.dart');
 
-void main() => runApp(GetMaterialApp(home: Home()));
+void main() {
+  runApp(Home());
+}
+
+class ExplorerTab {
+  ExplorerTab({required this.title});
+  String title;
+  String path = '';
+}
 
 class Controller extends GetxController {
-  var count = 0;
-  increment() {
-    count++;
-    update();
+  List<ExplorerTab> tabs = [ExplorerTab(title: 'First')].obs;
+  void addTab() {
+    tabs.add(ExplorerTab(title: tabs.length.toString()));
+  }
+
+  void reorder(int oldIndex, int newIndex) {
+    final item = tabs.removeAt(oldIndex);
+    tabs.insert(newIndex, item);
   }
 }
 
 class Home extends StatelessWidget {
   Home({super.key});
-
   final controller = Get.put(Controller());
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("counter")),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            GetBuilder<Controller>(
-                builder: (_) => Text(
-                      'clicks: ${controller.count}',
-                    )),
-            ElevatedButton(
-              child: const Text('Next Route'),
-              onPressed: () {
-                Get.to(Second());
-              },
+    return MaterialApp(
+        home: Obx(
+      () => DefaultTabController(
+          length: controller.tabs.length,
+          child: Scaffold(
+            appBar: ReorderableTabBar(
+              isScrollable: true,
+              buildDefaultDragHandles: false,
+              tabs: controller.tabs
+                  .map((e) => Tab(
+                        child: SizedBox(
+                          width: 100,
+                          child: Row(
+                            children: [
+                              Text(e.title),
+                              IconButton(
+                                  icon: const Icon(Icons.close),
+                                  onPressed: () {
+                                    controller.tabs.remove(e);
+                                  })
+                            ],
+                          ),
+                        ),
+                      ))
+                  .toList(),
+              onReorder: (p0, p1) => controller.reorder(p0, p1),
             ),
+            body: TabBarView(
+                children: controller.tabs
+                    .map((e) => Browser(title: e.title))
+                    .toList()),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                controller.addTab();
+              },
+              child: Icon(Icons.add),
+            ),
+          )),
+    ));
+  }
+}
+
+class Browser extends StatelessWidget {
+  const Browser({super.key, required this.title});
+  final String title;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+            height: 40,
+            color: Color.fromARGB(255, 255, 0, 221),
+            child: Row(
+              children: [Text(title)],
+            )),
+        Container(
+            height: 40,
+            color: Color(0xffe0e0e0),
+            child: Row(
+              children: [Text(title)],
+            )),
+        Expanded(
+            child: Row(
+          children: [
+            Container(
+              width: 200,
+              color: Color.fromARGB(255, 206, 46, 46),
+              child: Text(title),
+            ),
+            Expanded(
+              child: Container(
+                  color: Color.fromARGB(255, 20, 130, 46), child: Text(title)),
+            )
           ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => controller.increment(),
-        child: const Icon(Icons.add),
-      ),
+        )),
+        Container(
+            height: 20,
+            color: Color(0xffe0e0e0),
+            child: Row(
+              children: [Text(title)],
+            )),
+      ],
     );
   }
 }
-
-class Second extends StatelessWidget {
-  final Controller ctrl = Get.find();
-  @override
-  Widget build(context) {
-    return Scaffold(body: Center(child: Text("${ctrl.count}")));
-  }
-}
-
-
-// void main() {
-//   runApp(const MyApp(
-//       title: 'Flutter Demo Home Page', path: 'C:\\Git\\Chocolateandmilkwin'));
-// }
-
-// class MyApp extends StatefulWidget {
-//   const MyApp({super.key, required this.title, required this.path});
-//   final String title;
-//   final String path;
-//   @override
-//   State<MyApp> createState() => _MyApp();
-// }
-
-// class _MyApp extends State<MyApp> {
-//   String? _selectedDirectory;
-//   List<FileSystemEntity> _files = [];
-
-//   set selectedDirectory(String? value) {
-//     setState(() {
-//       _selectedDirectory = value;
-//       _files = value != null ? Directory(value).listSync() : [];
-//     });
-//   }
-
-//   Future<void> _pickFolder() async {
-//     String? selectedDirectory = await FilePicker.platform.getDirectoryPath();
-//     if (selectedDirectory != null) {
-//       setState(() {
-//         this.selectedDirectory = selectedDirectory;
-//       });
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Flutter Demo',
-//       themeMode: ThemeMode.system,
-//       theme: ThemeData.light(useMaterial3: true),
-//       darkTheme: ThemeData.dark(useMaterial3: true),
-//       home: Scaffold(
-//         appBar: AppBar(
-//           title: Text(widget.title),
-//           elevation: 10,
-//         ),
-//         body: Column(
-//           children: [
-//             Text(_selectedDirectory ?? 'No directory selected'),
-//             // FileList(
-//             //     files: _files.map((file) {
-//             //   return BrowserFileInfo.fromFile(file);
-//             // }).toList()),
-//           ],
-//         ),
-//         floatingActionButton: FloatingActionButton(onPressed: _pickFolder),
-//       ),
-//     );
-//   }
-// }
