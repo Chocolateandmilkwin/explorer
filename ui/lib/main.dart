@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:reorderable_tabbar/reorderable_tabbar.dart';
 
 void main() {
   runApp(Home());
@@ -26,86 +25,73 @@ class Controller extends GetxController {
 
 class Home extends StatelessWidget {
   Home({super.key});
+  final test = 0.obs;
   final controller = Get.put(Controller());
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Obx(
-      () => DefaultTabController(
-          animationDuration: Duration(milliseconds: 1),
-          length: controller.tabs.length,
-          child: Scaffold(
-            appBar: PreferredSize(
-                preferredSize: const Size.fromHeight(142),
-                child: Column(
-                  children: [
-                    ReorderableTabBar(
-                      isScrollable: true,
-                      buildDefaultDragHandles: false,
-                      padding: const EdgeInsets.all(0),
-                      tabs: controller.tabs
-                          .map((e) => Tab(
-                                height: 50,
-                                child: Container(
-                                  color: Color(0xffe0e0e0),
-                                  width: 200,
-                                  height: 50,
-                                  child: Row(
-                                    children: [
-                                      Text(e.title),
-                                      IconButton(
-                                          icon: const Icon(Icons.close),
-                                          onPressed: () {
-                                            controller.tabs.remove(e);
-                                          })
-                                    ],
-                                  ),
-                                ),
-                              ))
-                          .toList(),
-                      onReorder: (p0, p1) => controller.reorder(p0, p1),
-                    ),
-                    Container(
-                        height: 45,
-                        color: const Color.fromARGB(255, 255, 0, 221),
-                        child: const Row(
-                          children: [Text('title')],
-                        )),
-                    Container(
-                        height: 45,
-                        color: const Color(0xffe0e0e0),
-                        child: const Row(
-                          children: [Text('title')],
-                        )),
-                  ],
-                )),
-
-            // AppBar(
-            //   toolbarHeight: 200,
-            //   flexibleSpace: Column(
-            //     children: [
-            //
-
-            //     ],
-            //   ),
-            // ),
-            body: TabBarView(
-                children: controller.tabs
-                    .map((e) => Browser(title: e.title))
-                    .toList()),
-            bottomNavigationBar: Container(
-                height: 20,
-                color: const Color(0xffe0e0e0),
-                child: const Row(
-                  children: [Text('title')],
-                )),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                controller.addTab();
-              },
-              child: const Icon(Icons.add),
-            ),
-          )),
+      () => Scaffold(
+        appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(142),
+            child: Column(
+              children: [
+                Container(
+                  height: 50,
+                  margin: const EdgeInsets.only(top: 2, left: 2, right: 2),
+                  color: const Color.fromARGB(255, 22, 0, 221),
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: controller.tabs
+                        .map((e) => Container(
+                              color: Color(0xffe0e0e0),
+                              width: 200,
+                              height: 50,
+                              child: Row(
+                                children: [
+                                  Text(e.title),
+                                  IconButton(
+                                      icon: const Icon(Icons.close),
+                                      onPressed: () {
+                                        controller.tabs.remove(e);
+                                      })
+                                ],
+                              ),
+                            ))
+                        .toList(),
+                  ),
+                ),
+                Container(
+                    height: 45,
+                    color: const Color.fromARGB(255, 255, 0, 221),
+                    child: Row(
+                      children: [Text(test.toString())],
+                    )),
+                Container(
+                    height: 45,
+                    color: const Color(0xffe0e0e0),
+                    child: const Row(
+                      children: [Text('title')],
+                    )),
+              ],
+            )),
+        // body: TabBarView(
+        //     children:
+        //         controller.tabs.map((e) => Browser(title: e.title)).toList()),
+        bottomNavigationBar: Container(
+            height: 20,
+            color: const Color(0xffe0e0e0),
+            child: const Row(
+              children: [Text('title')],
+            )),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            controller.addTab();
+            test.value++;
+          },
+          child: const Icon(Icons.add),
+        ),
+      ),
     ));
   }
 }
